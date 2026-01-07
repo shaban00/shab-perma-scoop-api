@@ -1,0 +1,60 @@
+services:
+  scoop-db:
+    image: registry.lil.tools/library/postgres:16.3
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: scoop_api
+      POSTGRES_USER: scoop
+    volumes:
+      - postgres_data:/var/lib/postgresql/data:delegated
+    networks:
+      - default
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: registry.lil.tools/harvardlil/scoop-rest-api:151-11407a760241dfe19c128bbb631801ee
+    init: true
+    tty: true
+    entrypoint:
+      - "/docker-entrypoint.sh"
+    command:
+      - "/bin/bash"
+    environment:
+      - DATABASE_USERNAME=scoop
+      - DATABASE_PASSWORD=password
+      - DATABASE_HOST=scoop-db
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=scoop_api
+      - TESTS_DATABASE_USERNAME=scoop
+      - TESTS_DATABASE_PASSWORD=password
+      - TESTS_DATABASE_HOST=scoop-db
+      - TESTS_DATABASE_PORT=5432
+      - START_CRON=false              # false|true
+      - START_FLASK_SERVER=false      # false|true
+      - START_CELERY=false            # false|true
+      # Uncomment to run Xvfb with the below virtual display number
+      # - DISPLAY=:99
+      # Uncomment to create a new access key
+      # - CREATE_ACCESS_KEY_WITH_LABEL=dev
+    ports:
+      - "127.0.0.1:5000:5000"
+    depends_on:
+      - scoop-db
+    networks:
+      default:
+        aliases:
+          - 'scoop-rest-api'
+  scoop-redis:
+    image: registry.lil.tools/library/redis:7.0
+    volumes:
+      - redis_data:/data:delegated
+
+volumes:
+  postgres_data:
+  node_modules:
+  redis_data:
+
+
+networks:
+  default:

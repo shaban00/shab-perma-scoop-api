@@ -1,0 +1,19 @@
+#
+# NB: We can't ignore everything, unlike in other projects,
+# because this image is pushed to our registry for use in local
+# development of Perma. A copy of the code needs to be included.
+#
+
+node_modules
+storage
+
+.DS_Store
+.git
+*.pyc
+__pycache__
+.pytest_cache
+*.db
+.env
+*.pem
+access_key.txt
+docker/access_keys/access_key.txt

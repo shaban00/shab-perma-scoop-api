@@ -1,0 +1,2 @@
+* * * * * echo "Cron is running" >> /var/log/cron.log 2>&1
+*/5 * * * * cd /app; POETRY_CACHE_DIR=/opt/.cache /opt/poetry-venv/bin/poetry run flask cleanup >> /var/log/cron.log 2>&1
